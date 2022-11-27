@@ -1,10 +1,10 @@
-package com.shvydkov.emerancy_bot;
+package com.ntu.shvydkov.emerancy_bot;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EmerancyBotApplicationTests {
+class MainTests {
 
 	@Test
 	void contextLoads() {

@@ -1,11 +1,11 @@
-package com.shvydkov.emerancy_bot;
+package com.ntu.shvydkov.emerancy_bot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.telegram.telegrambots.ApiContextInitializer;
 
 @SpringBootApplication
-public class EmerancyBotApplication {
+public class Main {
 
 //    @Bean
 //    FileReader fileReader() {
@@ -15,7 +15,7 @@ public class EmerancyBotApplication {
     public static void main(String[] args) {
         System.out.println("Bot starting...");
         ApiContextInitializer.init();
-        SpringApplication.run(EmerancyBotApplication.class, args);
+        SpringApplication.run(Main.class, args);
         System.out.println("Bot started!");
     }
 

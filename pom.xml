@@ -8,11 +8,11 @@
 		<version>2.7.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.shvydkov</groupId>
+	<groupId>com.ntu.shvydkov</groupId>
 	<artifactId>emerancy_bot</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>emerancy_bot</name>
-	<description>emerancy_bot</description>
+	<name>emergency_bot</name>
+	<description>emergency_bot</description>
 	<properties>
 		<java.version>11</java.version>
 		<telegram.version>5.0.1</telegram.version>
