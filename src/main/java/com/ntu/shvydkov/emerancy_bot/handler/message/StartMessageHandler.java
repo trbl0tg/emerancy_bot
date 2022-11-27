@@ -1,6 +1,7 @@
 package com.ntu.shvydkov.emerancy_bot.handler.message;
 
 import com.ntu.shvydkov.emerancy_bot.conditions.BotCondition;
+import com.ntu.shvydkov.emerancy_bot.repo.UsersRepo;
 import com.ntu.shvydkov.emerancy_bot.telegram.ReplyMessageService;
 import com.ntu.shvydkov.emerancy_bot.telegram.keyboard.ReplyKeyboardMarkupBuilder;
 import org.springframework.stereotype.Component;
@@ -16,9 +17,11 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 public class StartMessageHandler implements MessageHandler {
 
     private final ReplyMessageService replyMessageService;
+    private final UsersRepo usersRepo;
 
-    public StartMessageHandler(ReplyMessageService replyMessageService) {
+    public StartMessageHandler(ReplyMessageService replyMessageService, UsersRepo userRepo) {
         this.replyMessageService = replyMessageService;
+        this.usersRepo = userRepo;
     }
 
     @Override

@@ -1,0 +1,19 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: mysecretpassword
+    driverClassName: org.postgresql.Driver
+
+#flyway:
+#  user: postgres
+#  password: mysecretpassword
+#  schemas: posgres
+#  url: jdbc:postgresql://localhost:5432/posgres
+#  locations: filesystem:db/migration
