@@ -37,7 +37,7 @@ public class UpdateReceiver {
      * Distributes incoming {@link Update} by its type and returns prepared response to user from specific handlers to main executable method.
      */
     public PartialBotApiMethod<? extends Serializable> handleUpdate(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
+        if (update.hasMessage() && (update.getMessage().hasText() || update.getMessage().hasLocation())) {
             Message message = update.getMessage();
             BotCondition botCondition = getBotCondition(message);
             log.info(
@@ -60,7 +60,7 @@ public class UpdateReceiver {
                     update.getMessage().getChatId()
             );
 
-            return replyMessageService.getTextMessage(update.getMessage().getChatId(), "Я могу принимать только текстовые сообщения!");
+            return replyMessageService.getTextMessage(update.getMessage().getChatId(), "Вибач, я ще не навчився опрацьовувати таке(");
         }
     }
 
@@ -68,7 +68,7 @@ public class UpdateReceiver {
      * Defines current bot condition by user message to handle updates further in specific handlers.
      */
     private BotCondition getBotCondition(Message message) {
-        Integer userId = message.getFrom().getId();
+        Long userId = message.getFrom().getId();
         String userTextMessage = message.getText();
         BotCondition botCondition;
 
@@ -76,6 +76,10 @@ public class UpdateReceiver {
             case "/start":
             case "Головне меню":
                 botCondition = BotCondition.MAIN_MENU;
+                break;
+            case "Сповістити про загрозу":
+            case "Мої публікації":
+                botCondition = BotCondition.REPORT;
                 break;
             case "Допомога":
                 botCondition = BotCondition.HELP;

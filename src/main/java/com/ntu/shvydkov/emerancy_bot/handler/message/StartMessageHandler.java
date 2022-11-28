@@ -2,6 +2,7 @@ package com.ntu.shvydkov.emerancy_bot.handler.message;
 
 import com.ntu.shvydkov.emerancy_bot.conditions.BotCondition;
 import com.ntu.shvydkov.emerancy_bot.repo.UsersRepo;
+import com.ntu.shvydkov.emerancy_bot.service.UserRepoService;
 import com.ntu.shvydkov.emerancy_bot.telegram.ReplyMessageService;
 import com.ntu.shvydkov.emerancy_bot.telegram.keyboard.ReplyKeyboardMarkupBuilder;
 import org.springframework.stereotype.Component;
@@ -18,10 +19,12 @@ public class StartMessageHandler implements MessageHandler {
 
     private final ReplyMessageService replyMessageService;
     private final UsersRepo usersRepo;
+    private final UserRepoService userRepoService;
 
-    public StartMessageHandler(ReplyMessageService replyMessageService, UsersRepo userRepo) {
+    public StartMessageHandler(ReplyMessageService replyMessageService, UsersRepo userRepo, UserRepoService userRepoService) {
         this.replyMessageService = replyMessageService;
         this.usersRepo = userRepo;
+        this.userRepoService = userRepoService;
     }
 
     @Override
@@ -31,6 +34,7 @@ public class StartMessageHandler implements MessageHandler {
 
     @Override
     public SendMessage handle(Message message) {
+        userRepoService.createUserIfNotExistsOrReturnExisting(message);
         return getMainMenu(message.getChatId());
     }
 
@@ -39,8 +43,10 @@ public class StartMessageHandler implements MessageHandler {
                 .setText("Привіт! "
                         + "\n\nЩоб почати користуватися функціоналом, натискай на потрібну кнопку внизу. ")
                 .row()
-                .button("Classroom")
-                .button("Розклад")
+                .button("Сповістити про загрозу")
+                .endRow()
+                .row()
+                .button("Мої публікації")
                 .endRow()
                 .row()
                 .button("Довідник")

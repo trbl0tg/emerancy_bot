@@ -65,13 +65,14 @@ public class ReplyKeyboardMarkupBuilder implements KeyboardMarkupBuilder {
     @Override
     public SendMessage build() {
         SendMessage message = new SendMessage();
-        message.setChatId(chatId).setText(text);
+        message.setChatId(chatId);
+        message.setText(text);
 
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-        keyboardMarkup.setSelective(true)
-                .setResizeKeyboard(true)
-                .setOneTimeKeyboard(false)
-                .setKeyboard(keyboard);
+        keyboardMarkup.setSelective(true);
+        keyboardMarkup.setResizeKeyboard(true);
+        keyboardMarkup.setOneTimeKeyboard(false);
+        keyboardMarkup.setKeyboard(keyboard);
 
         message.setReplyMarkup(keyboardMarkup);
         return message;

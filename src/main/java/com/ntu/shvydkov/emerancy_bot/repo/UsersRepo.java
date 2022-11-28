@@ -8,4 +8,6 @@ import java.util.UUID;
 
 @Repository
 public interface UsersRepo extends CrudRepository<TUserData, UUID> {
+    Boolean existsByUsername(String username);
+    TUserData findByUsername(String username);
 }

@@ -68,7 +68,7 @@ public class TelegramUpdateService implements TelegramUpdateExtractor {
     }
 
     @Override
-    public Integer getUserId(Update update) {
+    public Long getUserId(Update update) {
         return getUpdateAttribute(
                 update,
                 message -> message.getFrom().getId(),

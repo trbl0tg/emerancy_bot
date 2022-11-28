@@ -15,7 +15,7 @@
 	<description>emergency_bot</description>
 	<properties>
 		<java.version>11</java.version>
-		<telegram.version>5.0.1</telegram.version>
+		<telegram.version>6.2.0</telegram.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -74,12 +74,12 @@
 		<dependency>
 			<groupId>org.telegram</groupId>
 			<artifactId>telegrambots-spring-boot-starter</artifactId>
-			<version>4.4.0.2</version>
+			<version>6.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.telegram</groupId>
 			<artifactId>telegrambots</artifactId>
-			<version>4.4.0.2</version>
+			<version>6.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.vdurmont</groupId>
@@ -92,9 +92,15 @@
 		<!--            <artifactId>telegrambots</artifactId>-->
 		<!--            <version>${telegram.version}</version>-->
 		<!--        </dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.telegram</groupId>-->
+<!--			<artifactId>telegrambotsextensions</artifactId>-->
+<!--			<version>${telegram.version}</version>-->
+<!--		</dependency>-->
+
 		<dependency>
-			<groupId>org.telegram</groupId>
-			<artifactId>telegrambotsextensions</artifactId>
+			<groupId>com.github.pengrad</groupId>
+			<artifactId>java-telegram-bot-api</artifactId>
 			<version>${telegram.version}</version>
 		</dependency>
 	</dependencies>

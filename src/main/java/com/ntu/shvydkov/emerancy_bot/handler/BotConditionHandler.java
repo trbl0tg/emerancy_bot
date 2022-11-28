@@ -15,7 +15,6 @@ import java.util.List;
 public class BotConditionHandler {
 
     private final List<MessageHandler> messageHandlers;
-
     private final ReplyMessageService replyMessageService;
 
     public BotConditionHandler(List<MessageHandler> messageHandlers, ReplyMessageService replyMessageService) {
@@ -26,7 +25,7 @@ public class BotConditionHandler {
     public BotApiMethod<Message> handleTextMessageByCondition(Message message, BotCondition botCondition) {
         MessageHandler messageHandler;
         try {
-             messageHandler = messageHandlers.stream()
+            messageHandler = messageHandlers.stream()
                     .filter(m -> m.canHandle(botCondition))
                     .findAny()
                     .orElseThrow(NoHandlerFoundException::new);
@@ -34,6 +33,7 @@ public class BotConditionHandler {
             log.error("No handler was found for current bot condition: {}", botCondition);
             return replyMessageService.getTextMessage(message.getChatId(), "Неможливо опрацювати запит.");
         }
+
         return messageHandler.handle(message);
     }
 

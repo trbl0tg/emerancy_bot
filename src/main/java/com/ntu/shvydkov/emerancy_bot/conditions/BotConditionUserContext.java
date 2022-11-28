@@ -8,15 +8,15 @@ import java.util.Map;
 @Component
 public class BotConditionUserContext implements BotConditionObserved {
 
-    private final Map<Integer, BotCondition> usersBotCondition = new HashMap<>();
+    private final Map<Long, BotCondition> usersBotCondition = new HashMap<>();
 
     @Override
-    public BotCondition getCurrentBotConditionForUserById(Integer userId) {
+    public BotCondition getCurrentBotConditionForUserById(Long userId) {
         return usersBotCondition.getOrDefault(userId, BotCondition.MAIN_MENU);
     }
 
     @Override
-    public void setCurrentBotConditionForUserWithId(Integer userId, BotCondition botCondition) {
+    public void setCurrentBotConditionForUserWithId(Long userId, BotCondition botCondition) {
         usersBotCondition.put(userId, botCondition);
     }
 }

@@ -52,16 +52,18 @@ public class InlineKeyboardMarkupBuilder implements KeyboardMarkupBuilder {
     }
 
     public InlineKeyboardMarkupBuilder button(String text, String callbackData) {
-        row.add(new InlineKeyboardButton()
-                .setText(text)
-                .setCallbackData(callbackData));
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText(text);
+        inlineKeyboardButton.setCallbackData(callbackData);
+        row.add(inlineKeyboardButton);
         return this;
     }
 
     public InlineKeyboardMarkupBuilder buttonWithURL(String text, String URL) {
-        row.add(new InlineKeyboardButton()
-                .setText(text)
-                .setUrl(URL));
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText(text);
+        inlineKeyboardButton.setUrl(URL);
+        row.add(inlineKeyboardButton);
         return this;
     }
 
@@ -76,19 +78,21 @@ public class InlineKeyboardMarkupBuilder implements KeyboardMarkupBuilder {
     public SendMessage build() {
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         keyboardMarkup.setKeyboard(keyboard);
-        return new SendMessage()
-                .setChatId(chatId)
-                .setText(text)
-                .setReplyMarkup(keyboardMarkup);
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(chatId);
+        sendMessage.setText(text);
+        sendMessage.setReplyMarkup(keyboardMarkup);
+        return sendMessage;
     }
 
     public EditMessageText rebuild(Long messageId) {
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         keyboardMarkup.setKeyboard(keyboard);
-        return new EditMessageText()
-                .setChatId(chatId)
-                .setMessageId(toIntExact(messageId))
-                .setReplyMarkup(keyboardMarkup);
+        EditMessageText editMessageText = new EditMessageText();
+        editMessageText.setChatId(chatId);
+        editMessageText.setMessageId(toIntExact(messageId));
+        editMessageText.setReplyMarkup(keyboardMarkup);
+        return editMessageText;
     }
 
 }

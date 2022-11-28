@@ -9,7 +9,7 @@ public interface TelegramUpdateExtractor {
 
     String getUserName(Update update);
 
-    Integer getUserId(Update update);
+    Long getUserId(Update update);
 
     Integer getMessageId(Update update);
 

@@ -54,10 +54,9 @@ public class EmergancyTelegramBot extends TelegramLongPollingBot {
         if (responseToUser instanceof BotApiMethod) {
             try {
                 execute((BotApiMethod<? extends Serializable>) responseToUser);
-            } catch (TelegramApiException e) {
+            } catch (Exception e) {
                 log.error("Error occurred while sending message to user: {}", e.getMessage());
             }
         }
-
     }
 }
