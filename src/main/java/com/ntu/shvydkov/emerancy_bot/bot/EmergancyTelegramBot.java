@@ -7,6 +7,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -40,6 +41,14 @@ public class EmergancyTelegramBot extends TelegramLongPollingBot {
                 execute((SendDocument) responseToUser);
             } catch (TelegramApiException e) {
                 log.error("Error occurred while sending message to user: {}", e.getMessage());
+            }
+        }
+
+        if (responseToUser instanceof SendLocation){
+            try {
+                execute((SendLocation) responseToUser);
+            } catch (TelegramApiException e) {
+                log.error("Error occurred while sending location to user: {}", e.getMessage());
             }
         }
 

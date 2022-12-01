@@ -7,6 +7,7 @@ import com.ntu.shvydkov.emerancy_bot.telegram.ReplyMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
+import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -70,31 +71,30 @@ public class UpdateReceiver {
     private BotCondition getBotCondition(Message message) {
         Long userId = message.getFrom().getId();
         String userTextMessage = message.getText();
+        Location location = message.getLocation();
         BotCondition botCondition;
 
-        switch (userTextMessage) {
-            case "/start":
-            case "Головне меню":
-                botCondition = BotCondition.MAIN_MENU;
-                break;
-            case "Сповістити про загрозу":
-            case "Мої публікації":
-                botCondition = BotCondition.REPORT;
-                break;
-            case "Допомога":
-                botCondition = BotCondition.HELP;
-                break;
+        if (message.getText() == null && location != null) {
+            botCondition = BotCondition.REPORT;
+        } else {
+            switch (userTextMessage) {
+                case "/start":
+                case "Головне меню":
+                    botCondition = BotCondition.MAIN_MENU;
+                    break;
+                case "Сповістити про загрозу":
+                case "Мої публікації":
+                    botCondition = BotCondition.REPORT;
+                    break;
+                case "Допомога":
+                    botCondition = BotCondition.HELP;
+                    break;
 //            case "Довідник":
 //                botCondition = BotCondition.DICTIONARY;
 //                break;
-//            case "Розклад":
-//                botCondition = BotCondition.SCHEDULE;
-//                break;
-//            case "Classroom":
-//                botCondition = BotCondition.CLASSROOM;
-//                break;
-            default:
-                botCondition = botConditionUserContext.getCurrentBotConditionForUserById(userId);
+                default:
+                    botCondition = botConditionUserContext.getCurrentBotConditionForUserById(userId);
+            }
         }
         botConditionUserContext.setCurrentBotConditionForUserWithId(userId, botCondition);
         return botCondition;

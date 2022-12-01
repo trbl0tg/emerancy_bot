@@ -21,6 +21,8 @@ public class TUserData {
     private LocalDateTime created;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
     private List<Report> reports;
+//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
+//    private Location locationl
 //    private List<Subscriptions> subscriptions;
 
     public TUserData(String username, LocalDateTime created) {

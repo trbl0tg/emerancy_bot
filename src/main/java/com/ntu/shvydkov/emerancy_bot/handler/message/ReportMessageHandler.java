@@ -12,10 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
+import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -45,15 +48,27 @@ public class ReportMessageHandler implements MessageHandler {
 
         if (state == 0) {
             if (message.getText().equals("Мої публікації")) {
-                String reports = reportService.findAllReportsByUserName(message.getFrom().getUserName()).stream().map(Report::getDisplayed).collect(Collectors.joining("\n"));
-                if (reports.isEmpty()) {
-                    reports = "Поки що ви нічого не публікували.";
+                List<Report> allReportsByUserName = reportService.findAllReportsByUserName(message.getFrom().getUserName());
+                if (allReportsByUserName == null || allReportsByUserName.isEmpty()) {
+                    setDialogQuestionWithReturnToHome("Поки що ви нічого не публікували.", result);
+                } else {
+                    Double lat = allReportsByUserName.get(0).getLocation().getLatitude();
+                    Double lon = allReportsByUserName.get(0).getLocation().getLongitude();
+                    SendLocation sendLocation = new SendLocation(chatId.toString(), lat, lon);
+                    return sendLocation;
                 }
-                result.setText(reports)
-                        .row()
-                        .button("Головне меню")
-                        .endRow();
-                return result.build();
+
+//                String reports = allReportsByUserName.stream().map(Report::getDisplayed).collect(Collectors.joining("\n"));
+
+
+//                SendLocation sendLocation = new SendLocation(chatId, );
+//                return replyMessageService.getTextMessage(chatId, "text");
+
+//                result.setText(reports)
+//                        .row()
+//                        .button("Головне меню")
+//                        .endRow();
+//                return result.build();
             }
 
             report = new Report();
@@ -84,11 +99,12 @@ public class ReportMessageHandler implements MessageHandler {
         } else if (state == 3) {
             String location;
             if (message.hasLocation()) {
-                location = message.getLocation().toString();
+                Location location1 = message.getLocation();
+                report.setLocation(new com.ntu.shvydkov.emerancy_bot.domain.Location(null, location1.getLatitude(), location1.getLongitude()));
             } else {
                 location = message.getText();
+                report.setTextLocation(location);
             }
-            report.setLocation(location);
             if (report.getTitle() != null && report.getDangerLevel() != null && report.getLocation() != null) {
                 Report savedReport = reportRepo.save(report);
                 report.setId(savedReport.getId());

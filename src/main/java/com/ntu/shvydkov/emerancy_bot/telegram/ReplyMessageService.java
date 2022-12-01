@@ -18,6 +18,16 @@ public class ReplyMessageService {
         return sendMessage;
     }
 
+
+    public SendMessage getTextMessageNew(Long chatId, String text) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.enableMarkdown(false);
+        sendMessage.setChatId(String.valueOf(chatId));
+        sendMessage.setText(text);
+        return sendMessage;
+    }
+
+
     public AnswerCallbackQuery getPopUpAnswer(String callbackId, String text) {
         AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
         answerCallbackQuery.setCallbackQueryId(callbackId);

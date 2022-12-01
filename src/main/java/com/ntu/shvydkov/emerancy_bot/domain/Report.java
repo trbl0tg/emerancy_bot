@@ -18,7 +18,6 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String title;
-    private String location;
     @Enumerated
     private DangerLevel dangerLevel;
     @Enumerated
@@ -26,12 +25,20 @@ public class Report {
     private LocalDateTime created;
     @ManyToOne
     private TUserData user;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Location location;
+    private String textLocation;
 
     public String getDisplayed() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-        return "Назва : " + this.title + "\n" +
-                "Локація : " + this.getLocation() + "\n" +
+        String s = "Назва : " + this.title + "\n" +
                 "Рівень загрози : " + this.getDangerLevel() + "\n" +
                 "Дата : " + this.getCreated().format(formatter) + "\n";
+        if (this.textLocation != null || !this.textLocation.isEmpty()) {
+            s += "Локація : " + this.textLocation + "\n";
+        } else {
+            s += "Локація : ";
+        }
+        return s;
     }
 }
