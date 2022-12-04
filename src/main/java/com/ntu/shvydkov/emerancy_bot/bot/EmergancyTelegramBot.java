@@ -19,12 +19,10 @@ import java.io.Serializable;
 public class EmergancyTelegramBot extends TelegramLongPollingBot {
 
     @Getter
-//    @Value("${bot.username}")
-            String botUsername = "ntu_emergancy_bot";
+    String botUsername = "ntu_emergancy_bot";
 
     @Getter
-//    @Value("${bot.token}")
-            String botToken = "5818457683:AAFmTcqYrT9sOxdBnndSeml6DOFpyfpIlmA";
+    String botToken = "5818457683:AAFmTcqYrT9sOxdBnndSeml6DOFpyfpIlmA";
 
     private final UpdateReceiver updateReceiver;
 
@@ -34,7 +32,7 @@ public class EmergancyTelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        PartialBotApiMethod<? extends Serializable> responseToUser = updateReceiver.handleUpdate(update);
+        PartialBotApiMethod<? extends Serializable> responseToUser = updateReceiver.handleUpdate(update, this);
 
         if (responseToUser instanceof SendDocument) {
             try {
@@ -44,7 +42,7 @@ public class EmergancyTelegramBot extends TelegramLongPollingBot {
             }
         }
 
-        if (responseToUser instanceof SendLocation){
+        if (responseToUser instanceof SendLocation) {
             try {
                 execute((SendLocation) responseToUser);
             } catch (TelegramApiException e) {

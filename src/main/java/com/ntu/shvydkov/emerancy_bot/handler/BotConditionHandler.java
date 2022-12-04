@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class BotConditionHandler {
         this.replyMessageService = replyMessageService;
     }
 
-    public BotApiMethod<Message> handleTextMessageByCondition(Message message, BotCondition botCondition) {
+    public BotApiMethod<Message> handleTextMessageByCondition(Message message, BotCondition botCondition, AbsSender absSender) {
         MessageHandler messageHandler;
         try {
             messageHandler = messageHandlers.stream()
@@ -34,7 +35,7 @@ public class BotConditionHandler {
             return replyMessageService.getTextMessage(message.getChatId(), "Неможливо опрацювати запит.");
         }
 
-        return messageHandler.handle(message);
+        return (BotApiMethod<Message>) messageHandler.handle(message, absSender);
     }
 
 }

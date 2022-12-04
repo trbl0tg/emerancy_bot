@@ -29,4 +29,12 @@ public class TUserData {
         this.username = username;
         this.created = created;
     }
+
+    @Override
+    public String toString() {
+        return "TUserData{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                '}';
+    }
 }

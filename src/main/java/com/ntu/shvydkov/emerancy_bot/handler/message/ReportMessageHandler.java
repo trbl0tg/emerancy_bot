@@ -8,14 +8,16 @@ import com.ntu.shvydkov.emerancy_bot.service.ReportService;
 import com.ntu.shvydkov.emerancy_bot.service.UserRepoService;
 import com.ntu.shvydkov.emerancy_bot.telegram.ReplyMessageService;
 import com.ntu.shvydkov.emerancy_bot.telegram.keyboard.ReplyKeyboardMarkupBuilder;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 public class ReportMessageHandler implements MessageHandler {
 
     private volatile int state = 0;
+    private volatile List<Report> responseReportsWithLocations = List.of();
     Report report = null;
     @Autowired
     private ReplyMessageService replyMessageService;
@@ -41,34 +44,30 @@ public class ReportMessageHandler implements MessageHandler {
         return botCondition.equals(BotCondition.REPORT);
     }
 
+    @SneakyThrows
     @Override
-    public BotApiMethod<Message> handle(Message message) {
+    public BotApiMethod<? extends Serializable> handle(Message message, AbsSender absSender) {
         Long chatId = message.getChatId();
         ReplyKeyboardMarkupBuilder result = ReplyKeyboardMarkupBuilder.create(chatId);
 
         if (state == 0) {
             if (message.getText().equals("Мої публікації")) {
-                List<Report> allReportsByUserName = reportService.findAllReportsByUserName(message.getFrom().getUserName());
-                if (allReportsByUserName == null || allReportsByUserName.isEmpty()) {
-                    setDialogQuestionWithReturnToHome("Поки що ви нічого не публікували.", result);
+                responseReportsWithLocations = reportService.findAllReportsByUserName(message.getFrom().getUserName());
+                if (responseReportsWithLocations == null || responseReportsWithLocations.isEmpty()) {
+                    return setDialogQuestionWithReturnToHome("Поки що ви нічого не публікували.", result).build();
                 } else {
-                    Double lat = allReportsByUserName.get(0).getLocation().getLatitude();
-                    Double lon = allReportsByUserName.get(0).getLocation().getLongitude();
-                    SendLocation sendLocation = new SendLocation(chatId.toString(), lat, lon);
-                    return sendLocation;
+
+                    for (Report responseReportsWithLocation : responseReportsWithLocations) {
+                        if (responseReportsWithLocation.getTextLocation() != null) {
+                            absSender.execute(replyMessageService.getTextMessage(message.getChatId(), responseReportsWithLocation.getDisplayed()));
+                        } else {
+                            absSender.execute(replyMessageService.getTextMessage(message.getChatId(), responseReportsWithLocation.getDisplayed()));
+                            absSender.execute(replyMessageService.getLocation(message.getChatId(), responseReportsWithLocation.getLocation()));
+                        }
+//                        absSender.execute(replyMessageService.getTextMessage(message.getChatId(), "\n"));
+                    }
+                    return result.build();
                 }
-
-//                String reports = allReportsByUserName.stream().map(Report::getDisplayed).collect(Collectors.joining("\n"));
-
-
-//                SendLocation sendLocation = new SendLocation(chatId, );
-//                return replyMessageService.getTextMessage(chatId, "text");
-
-//                result.setText(reports)
-//                        .row()
-//                        .button("Головне меню")
-//                        .endRow();
-//                return result.build();
             }
 
             report = new Report();
@@ -105,18 +104,27 @@ public class ReportMessageHandler implements MessageHandler {
                 location = message.getText();
                 report.setTextLocation(location);
             }
-            if (report.getTitle() != null && report.getDangerLevel() != null && report.getLocation() != null) {
+            if (report.getTitle() != null && report.getDangerLevel() != null && (report.getLocation() != null || report.getTextLocation() != null)) {
                 Report savedReport = reportRepo.save(report);
                 report.setId(savedReport.getId());
                 log.info("Report saved: " + report.toString());
+                result.setText("Запис опубліковано та відправлено на розгляд.")
+                        .row()
+                        .button("Мої публікації")
+                        .endRow()
+                        .row()
+                        .button("Головне меню")
+                        .endRow();
+            } else {
+                log.error("Report is not saved: " + report.toString());
+                result.setText("Помилка при створенні запису. Будь ласка зв`яжіться з розробником!")
+                        .row()
+                        .button("Мої публікації")
+                        .endRow()
+                        .row()
+                        .button("Головне меню")
+                        .endRow();
             }
-            result.setText("Запис опубліковано та відправлено на розгляд.")
-                    .row()
-                    .button("Мої публікації")
-                    .endRow()
-                    .row()
-                    .button("Головне меню")
-                    .endRow();
             state = 0;
         }
 

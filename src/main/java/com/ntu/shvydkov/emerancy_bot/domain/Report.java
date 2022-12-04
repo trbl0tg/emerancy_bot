@@ -1,15 +1,16 @@
 package com.ntu.shvydkov.emerancy_bot.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@ToString
+//@RequiredArgsConstructor
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,7 +35,7 @@ public class Report {
         String s = "Назва : " + this.title + "\n" +
                 "Рівень загрози : " + this.getDangerLevel() + "\n" +
                 "Дата : " + this.getCreated().format(formatter) + "\n";
-        if (this.textLocation != null || !this.textLocation.isEmpty()) {
+        if (this.textLocation != null) {
             s += "Локація : " + this.textLocation + "\n";
         } else {
             s += "Локація : ";

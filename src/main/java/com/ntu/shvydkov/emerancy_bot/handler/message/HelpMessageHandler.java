@@ -5,6 +5,7 @@ import com.ntu.shvydkov.emerancy_bot.telegram.ReplyMessageService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 
 @Component
 public class HelpMessageHandler implements MessageHandler {
@@ -16,7 +17,7 @@ public class HelpMessageHandler implements MessageHandler {
     }
 
     @Override
-    public SendMessage handle(Message message) {
+    public SendMessage handle(Message message, AbsSender absSender) {
         Long chatId = message.getChatId();
         return replyMessageService.getTextMessage(chatId,
                 "Щоб зкористатися ботом просто натискайте кнопки внизу екрану.\n" +

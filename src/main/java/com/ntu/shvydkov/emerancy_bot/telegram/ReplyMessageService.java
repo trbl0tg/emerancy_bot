@@ -1,7 +1,9 @@
 package com.ntu.shvydkov.emerancy_bot.telegram;
 
+import com.ntu.shvydkov.emerancy_bot.domain.Location;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
+import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -16,6 +18,14 @@ public class ReplyMessageService {
         sendMessage.setChatId(String.valueOf(chatId));
         sendMessage.setText(text);
         return sendMessage;
+    }
+
+    public SendLocation getLocation(Long chatId, Location location){
+        SendLocation sendLocation = new SendLocation();
+        sendLocation.setChatId(chatId);
+        sendLocation.setLatitude(location.getLatitude());
+        sendLocation.setLongitude(location.getLongitude());
+        return sendLocation;
     }
 
 

@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import java.io.Serializable;
 
@@ -37,7 +38,7 @@ public class UpdateReceiver {
     /**
      * Distributes incoming {@link Update} by its type and returns prepared response to user from specific handlers to main executable method.
      */
-    public PartialBotApiMethod<? extends Serializable> handleUpdate(Update update) {
+    public PartialBotApiMethod<? extends Serializable> handleUpdate(Update update, AbsSender absSender) {
         if (update.hasMessage() && (update.getMessage().hasText() || update.getMessage().hasLocation())) {
             Message message = update.getMessage();
             BotCondition botCondition = getBotCondition(message);
@@ -52,7 +53,7 @@ public class UpdateReceiver {
                     botCondition
             );
 
-            return botConditionHandler.handleTextMessageByCondition(message, botCondition);
+            return botConditionHandler.handleTextMessageByCondition(message, botCondition, absSender);
         } else {
             log.error(
                     "Unsupported request from: {}; " +

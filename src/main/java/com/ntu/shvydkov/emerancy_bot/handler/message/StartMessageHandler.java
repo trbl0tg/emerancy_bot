@@ -8,6 +8,7 @@ import com.ntu.shvydkov.emerancy_bot.telegram.keyboard.ReplyKeyboardMarkupBuilde
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 
 /**
  * Handles {@link Message} when {@link BotCondition} is {@link BotCondition#MAIN_MENU}.
@@ -33,7 +34,7 @@ public class StartMessageHandler implements MessageHandler {
     }
 
     @Override
-    public SendMessage handle(Message message) {
+    public SendMessage handle(Message message, AbsSender absSender) {
         userRepoService.createUserIfNotExistsOrReturnExisting(message);
         return getMainMenu(message.getChatId());
     }
