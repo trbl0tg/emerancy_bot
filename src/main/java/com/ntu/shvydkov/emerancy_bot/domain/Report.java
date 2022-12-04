@@ -1,5 +1,6 @@
 package com.ntu.shvydkov.emerancy_bot.domain;
 
+import com.ntu.shvydkov.emerancy_bot.handler.DangerLevelUtils;
 import lombok.*;
 
 import javax.persistence.*;
@@ -33,7 +34,7 @@ public class Report {
     public String getDisplayed() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         String s = "Назва : " + this.title + "\n" +
-                "Рівень загрози : " + this.getDangerLevel() + "\n" +
+                "Рівень загрози : " + DangerLevelUtils.dangerLevelToText(this.getDangerLevel()) + "\n" +
                 "Дата : " + this.getCreated().format(formatter) + "\n";
         if (this.textLocation != null) {
             s += "Локація : " + this.textLocation + "\n";
