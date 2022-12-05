@@ -9,10 +9,12 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Main {@link Update} handler. Defines the type of {@link Update} and passes it to other handlers.
@@ -39,7 +41,7 @@ public class UpdateReceiver {
      * Distributes incoming {@link Update} by its type and returns prepared response to user from specific handlers to main executable method.
      */
     public PartialBotApiMethod<? extends Serializable> handleUpdate(Update update, AbsSender absSender) {
-        if (update.hasMessage() && (update.getMessage().hasText() || update.getMessage().hasLocation())) {
+        if (update.hasMessage() && (update.getMessage().hasText() || update.getMessage().hasLocation()) || update.getMessage().hasPhoto()) {
             Message message = update.getMessage();
             BotCondition botCondition = getBotCondition(message);
             log.info(
@@ -73,9 +75,10 @@ public class UpdateReceiver {
         Long userId = message.getFrom().getId();
         String userTextMessage = message.getText();
         Location location = message.getLocation();
+        List<PhotoSize> photo = message.getPhoto();
         BotCondition botCondition;
 
-        if (message.getText() == null && location != null) {
+        if (message.getText() == null && (location != null || photo!=null)) {
             botCondition = BotCondition.REPORT;
         } else {
             switch (userTextMessage) {

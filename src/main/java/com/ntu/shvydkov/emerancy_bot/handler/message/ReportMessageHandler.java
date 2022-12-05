@@ -2,6 +2,7 @@ package com.ntu.shvydkov.emerancy_bot.handler.message;
 
 import com.ntu.shvydkov.emerancy_bot.conditions.BotCondition;
 import com.ntu.shvydkov.emerancy_bot.domain.DangerLevel;
+import com.ntu.shvydkov.emerancy_bot.domain.PhotoEntity;
 import com.ntu.shvydkov.emerancy_bot.domain.Report;
 import com.ntu.shvydkov.emerancy_bot.handler.DangerLevelUtils;
 import com.ntu.shvydkov.emerancy_bot.repo.ReportRepo;
@@ -14,8 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import java.io.Serializable;
@@ -24,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.ntu.shvydkov.emerancy_bot.domain.DangerLevel.*;
+import static com.ntu.shvydkov.emerancy_bot.domain.DangerLevel.values;
 import static com.ntu.shvydkov.emerancy_bot.handler.DangerLevelUtils.dangerLevelToText;
 import static com.ntu.shvydkov.emerancy_bot.handler.DangerLevelUtils.textToDangerLevel;
 
@@ -54,7 +58,9 @@ public class ReportMessageHandler implements MessageHandler {
     public BotApiMethod<? extends Serializable> handle(Message message, AbsSender absSender) {
         Long chatId = message.getChatId();
         ReplyKeyboardMarkupBuilder result = ReplyKeyboardMarkupBuilder.create(chatId);
-
+        if (message.hasText() && (message.getText().equals("Мої публікації") || message.getText().equals("Головне меню"))) {
+            state = 0;
+        }
         if (state == 0) {
             if (message.getText().equals("Мої публікації")) {
                 responseReportsWithLocations = reportService.findAllReportsByUserName(message.getFrom().getUserName());
@@ -69,7 +75,14 @@ public class ReportMessageHandler implements MessageHandler {
                             absSender.execute(replyMessageService.getTextMessage(message.getChatId(), responseReportsWithLocation.getDisplayed()));
                             absSender.execute(replyMessageService.getLocation(message.getChatId(), responseReportsWithLocation.getLocation()));
                         }
-//                        absSender.execute(replyMessageService.getTextMessage(message.getChatId(), "\n"));
+                        if (responseReportsWithLocation.getPhotos() != null && responseReportsWithLocation.getPhotos().size() != 0) {
+                            SendPhoto sendPhoto = new SendPhoto();
+                            sendPhoto.setChatId(chatId);
+                            InputFile inputFile = new InputFile();
+                            inputFile.setMedia(responseReportsWithLocation.getPhotos().get(0).getFId());
+                            sendPhoto.setPhoto(inputFile);
+                            absSender.execute(sendPhoto);
+                        }
                     }
                     return result.build();
                 }
@@ -82,8 +95,8 @@ public class ReportMessageHandler implements MessageHandler {
             state = 1;
         } else if (state == 1) {
             report.setTitle(message.getText());
-            result.setText("Опиши рівень загрози?")
-                    .row();
+            result.setText("Опиши рівень загрози?");
+            result.row();
             result = displayDangerLevels(result);
             result.endRow()
                     .row()
@@ -94,7 +107,12 @@ public class ReportMessageHandler implements MessageHandler {
             //location
             DangerLevel level = setDangerLevel(message.getText());
             if (level == null) {
-                setDialogQuestionWithReturnToHome("Такого рівня загрози не передбачено.", result);
+                result.setText("Такого рівня загрози не передбачено.\n Опиши рівень загрози:").row();
+                result = displayDangerLevels(result);
+                result.endRow()
+                        .row()
+                        .button("Головне меню")
+                        .endRow();
             } else {
                 report.setDangerLevel(level);
                 setDialogQuestionWithReturnToHome("Відправ геолокацію або напиши адресу та примітки словами в наступному повідомленні?", result);
@@ -109,6 +127,28 @@ public class ReportMessageHandler implements MessageHandler {
                 location = message.getText();
                 report.setTextLocation(location);
             }
+            result = result
+                    .row()
+                    .button("Без фото")
+                    .endRow();
+
+            setDialogQuestionWithReturnToHome("Відправте 1 фото небезпечного об`єкта, якщо воно є, або просто натисніть кнопку 'Без фото'" +
+                    "\n Ні в якому разі не роби фото якщо це небезпечно!", result);
+            state = 4;
+        } else if (state == 4) {
+
+            if (message.hasPhoto()) {
+                List<PhotoSize> photos = message.getPhoto();
+                List<PhotoEntity> photosList = photos.stream()
+                        .map(photoSize -> new PhotoEntity(
+                                null,
+                                photoSize.getFileId(),
+                                photoSize.getWidth(),
+                                photoSize.getHeight()
+                        )).collect(Collectors.toList());
+                report.setPhotos(photosList);
+            }
+
             if (report.getTitle() != null && report.getDangerLevel() != null && (report.getLocation() != null || report.getTextLocation() != null)) {
                 Report savedReport = reportRepo.save(report);
                 report.setId(savedReport.getId());
