@@ -1,3 +1,4 @@
+
 spring:
   jpa:
     database: POSTGRESQL
@@ -17,4 +18,6 @@ spring:
 #  password: mysecretpassword
 #  schemas: posgres
 #  url: jdbc:postgresql://localhost:5432/posgres
+server:
+  port: 8081
 #  locations: filesystem:db/migration
