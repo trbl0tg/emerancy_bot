@@ -2,6 +2,7 @@ package com.ntu.shvydkov.emerancy_bot.controller;
 
 import com.ntu.shvydkov.emerancy_bot.domain.Report;
 import com.ntu.shvydkov.emerancy_bot.service.ReportService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,16 @@ public class MapsIntegrationController {
 
     @GetMapping
     public void sendRequestToMapsApp() {
+        List<ReportEnvelopItem> requestBody = getReportEnvelopItems();
+
+        final String uri = "http://localhost:8080/integration";
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.postForObject(uri, new ReportEnvelop(requestBody), String.class);
+        System.out.println(result);
+    }
+
+    @NotNull
+    private List<ReportEnvelopItem> getReportEnvelopItems() {
         List<Report> all = reportService.findAll();
 
         List<ReportEnvelopItem> requestBody = all.stream()
@@ -31,12 +42,14 @@ public class MapsIntegrationController {
                         item.getDangerLevel().toString(),
                         item.getCreated().toString()
                 )).collect(Collectors.toList());
+        return requestBody;
+    }
 
-        final String uri = "http://localhost:8080/integration";
-        RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.postForObject(uri, new ReportEnvelop(requestBody), String.class);
-        //send this shit to maps
-        System.out.println(result);
+    @GetMapping("/map-btn-trigger")
+    public ReportEnvelop mapButtonTrigger(){
+        //return
+        List<ReportEnvelopItem> requestBody = getReportEnvelopItems();
+        return new ReportEnvelop(requestBody);
     }
 
 }
