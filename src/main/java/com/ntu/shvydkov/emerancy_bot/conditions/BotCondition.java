@@ -4,11 +4,8 @@ public enum BotCondition {
     MAIN_MENU,
     HELP,
     REGISTRATION,
+    DICTIONARY,
     REPORT,
     SUBSCRIBE,
     LOCALIZED_INFO,
-//    SCHEDULE,
-//    SCHEDULE_COURSE,
-//    DICTIONARY,
-//    CLASSROOM;
 }

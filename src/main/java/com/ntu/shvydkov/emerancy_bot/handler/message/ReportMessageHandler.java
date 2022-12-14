@@ -4,7 +4,7 @@ import com.ntu.shvydkov.emerancy_bot.conditions.BotCondition;
 import com.ntu.shvydkov.emerancy_bot.domain.DangerLevel;
 import com.ntu.shvydkov.emerancy_bot.domain.PhotoEntity;
 import com.ntu.shvydkov.emerancy_bot.domain.Report;
-import com.ntu.shvydkov.emerancy_bot.handler.DangerLevelUtils;
+import com.ntu.shvydkov.emerancy_bot.handler.ChatBotUtils;
 import com.ntu.shvydkov.emerancy_bot.repo.ReportRepo;
 import com.ntu.shvydkov.emerancy_bot.service.ReportService;
 import com.ntu.shvydkov.emerancy_bot.service.UserRepoService;
@@ -29,8 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.ntu.shvydkov.emerancy_bot.domain.DangerLevel.values;
-import static com.ntu.shvydkov.emerancy_bot.handler.DangerLevelUtils.dangerLevelToText;
-import static com.ntu.shvydkov.emerancy_bot.handler.DangerLevelUtils.textToDangerLevel;
+import static com.ntu.shvydkov.emerancy_bot.handler.ChatBotUtils.*;
 
 @Slf4j
 @Component
@@ -177,7 +176,7 @@ public class ReportMessageHandler implements MessageHandler {
     }
 
     private DangerLevel setDangerLevel(String message) {
-        if (!Arrays.stream(values()).map(DangerLevelUtils::dangerLevelToText).collect(Collectors.toList()).contains(message)) {
+        if (!Arrays.stream(values()).map(ChatBotUtils::dangerLevelToText).collect(Collectors.toList()).contains(message)) {
             state = 0;
             return null;
         } else {
@@ -190,12 +189,5 @@ public class ReportMessageHandler implements MessageHandler {
             result.button(dangerLevelToText(level));
         }
         return result;
-    }
-
-    private ReplyKeyboardMarkupBuilder setDialogQuestionWithReturnToHome(String question, ReplyKeyboardMarkupBuilder result) {
-        return result.setText(question)
-                .row()
-                .button("Головне меню")
-                .endRow();
     }
 }

@@ -1,11 +1,12 @@
 package com.ntu.shvydkov.emerancy_bot.handler;
 
 import com.ntu.shvydkov.emerancy_bot.domain.DangerLevel;
+import com.ntu.shvydkov.emerancy_bot.telegram.keyboard.ReplyKeyboardMarkupBuilder;
 
 import static com.ntu.shvydkov.emerancy_bot.domain.DangerLevel.*;
 import static com.ntu.shvydkov.emerancy_bot.domain.DangerLevel.MEDIUM;
 
-public class DangerLevelUtils {
+public class ChatBotUtils {
     public static String dangerLevelToText(DangerLevel dangerLevel) {
         switch (dangerLevel) {
             case INFO:
@@ -36,5 +37,12 @@ public class DangerLevelUtils {
                 return EXTREME;
         }
         return MEDIUM;
+    }
+
+    public static ReplyKeyboardMarkupBuilder setDialogQuestionWithReturnToHome(String question, ReplyKeyboardMarkupBuilder result) {
+        return result.setText(question)
+                .row()
+                .button("Головне меню")
+                .endRow();
     }
 }

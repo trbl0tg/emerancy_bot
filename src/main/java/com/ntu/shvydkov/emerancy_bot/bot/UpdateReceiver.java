@@ -93,9 +93,9 @@ public class UpdateReceiver {
                 case "Допомога":
                     botCondition = BotCondition.HELP;
                     break;
-//            case "Довідник":
-//                botCondition = BotCondition.DICTIONARY;
-//                break;
+            case "Довідник":
+                botCondition = BotCondition.DICTIONARY;
+                break;
                 default:
                     botCondition = botConditionUserContext.getCurrentBotConditionForUserById(userId);
             }

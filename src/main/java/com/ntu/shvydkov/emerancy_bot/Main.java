@@ -8,12 +8,6 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 @SpringBootApplication
 public class Main {
-
-//    @Bean
-//    FileReader fileReader() {
-//        return new FileReader();
-//    }
-
     @SneakyThrows
     public static void main(String[] args) {
         System.out.println("Bot starting...");
